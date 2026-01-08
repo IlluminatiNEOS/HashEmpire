@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Illumination Trends - Sovereign Supply Chain Artifacts</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        .hero {
+            height: 100vh;
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a3e 50%, #2d1b69 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="%23ffffff" opacity="0.1"/><circle cx="75" cy="75" r="1.5" fill="%23ffffff" opacity="0.05"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+            animation: grain 0.2s steps(10) infinite;
+        }
+
+        @keyframes grain {
+            0%, 100% { transform: translate(0, 0); }
+            10% { transform: translate(-5%, -5%); }
+            20% { transform: translate(-10%, 5%); }
+            30% { transform: translate(5%, -10%); }
+            40% { transform: translate(-5%, 15%); }
+            50% { transform: translate(-10%, 5%); }
+            60% { transform: translate(15%, 0%); }
+            70% { transform: translate(0%, 10%); }
+            80% { transform: translate(-15%, 0%); }
+            90% { transform: translate(10%, -5%); }
+        }
+
+        .hero-content h1 {
+            font-family: 'Orbitron', monospace;
+            font-size: clamp(3rem, 8vw, 6rem);
+            margin-bottom: 1rem;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+        }
+
+        .hero-content p {
+            font-size: clamp(1.2rem, 3vw, 1.8rem);
+            max-width: 800px;
+            margin: 0 auto 2rem;
+            opacity: 0.9;
+        }
+
+        .cta-button {
+            display: inline-block;
+            background: linear-gradient(45deg, #ff6b35, #f7931e);
+            color: white;
+            padding: 1.2rem 3rem;
+            font-size: 1.2rem;
+            font-weight: 600;
+            text-decoration: none;
+            border-radius: 50px;
+            box-shadow: 0 10px 30px rgba(255, 107, 53, 0.4);
+            transition: all 0.3s ease;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 10px 30px rgba(255, 107, 53, 0.4); }
+            50% { box-shadow: 0 10px 40px rgba(255, 107, 53, 0.6); }
+            100% { box-shadow: 0 10px 30px rgba(255, 107, 53, 0.4); }
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(255, 107, 53, 0.6);
+        }
+
+        .section {
+            padding: 100px 5%;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            font-family: 'Orbitron', monospace;
+            font-size: 3rem;
+            text-align: center;
+            margin-bottom: 3rem;
+            background: linear-gradient(45deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 40px;
+            margin-top: 50px;
+        }
+
+        .product-card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .product-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #ff6b35, #f7931e, #667eea);
+        }
+
+        .product-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.15);
+        }
+
+        .product-tier {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 1rem;
+        }
+
+        .product-price {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #ff6b35;
+            margin-bottom: 1rem;
+        }
+
+        .product-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+
+        .product-features {
+            list-style: none;
+            margin-bottom: 2rem;
+        }
+
+        .product-features li {
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .product-features li i {
+            color: #f7931e;
+            margin-right: 1rem;
+            width: 20px;
+        }
+
+        .pledge-button {
+            width: 100%;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .pledge-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+
+        .stats {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 60px 5%;
+            text-align: center;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 40px;
+            margin-top: 40px;
+        }
+
+        .stat-item h3 {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-item p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .about {
+            background: #f8f9fa;
+        }
+
+        .about-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+        }
+
+        .about-text h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            color: #333;
+        }
+
+        .about-image {
+            background: linear-gradient(45deg, #ff6b35, #f7931e);
+            height: 400px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 6rem;
+            color: white;
+        }
+
+        .stretch-goals {
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a3e 100%);
+            color: white;
+        }
+
+        .goals-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .goal-card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 30px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .goal-amount {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #ff6b35;
+        }
+
+        .footer {
+            background: #111;
+            color: white;
+            text-align: center;
+            padding: 40px 5%;
+        }
+
+        @media (max-width: 768px) {
+            .about-content {
+                grid-template-columns: 1fr;
+            }
+
+            .products-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>ILLUMINATION TRENDS</h1>
+            <p>Sovereign Supply Chain Artifacts. From Poznań pixel streets to Tangier port shadows. Wear the code. Own the chain.</p>
+            <a href="#products" class="cta-button">ENTER THE ECOSYSTEM</a>
+        </div>
+    </section>
+
+    <!-- Products Section -->
+    <section class="section" id="products">
+        <h2 class="section-title">TIERED ARTIFACTS</h2>
+        <div class="products-grid">
+            <!-- Observer Node -->
+            <div class="product-card">
+                <div class="product-tier">🟢 OBSERVER NODE</div>
+                <div class="product-price">$33</div>
+                <div class="product-icon">👁️</div>
+                <h3>Alpha Access Kit</h3>
+                <ul class="product-features">
+                    <li><i class="fas fa-check"></i> Digital Survival Manual</li>
+                    <li><i class="fas fa-check"></i> Initiate Badge (Discord)</li>
+                    <li><i class="fas fa-check"></i> Early Simulation Access</li>
+                </ul>
+                <button class="pledge-button" onclick="pledge('observer')">PLEDGE $33</button>
+            </div>
+
+            <!-- Hardware Dongle -->
+            <div class="product-card">
+                <div class="product-tier">🟡 THE HARDWARE DONGLE</div>
+                <div class="product-price">$133</div>
+                <div class="product-icon">🔌</div>
+                <h3>Physical Key</h3>
+                <ul class="product-features">
+                    <li><i class="fas fa-check"></i> Aluminum USB Boot Key (Tor-ready)</li>
+                    <li><i class="fas fa-check"></i> Paper Wallet ID</li>
+                    <li><i class="fas fa-check"></i> 48h Early Access</li>
+                </ul>
+                <button class="pledge-button" onclick="pledge('hardware')">PLEDGE $133</button>
+            </div>
+
+            <!-- Oracle API -->
+            <div class="product-card">
+                <div class="product-tier">🔴 ORACLE API KEY</div>
+                <div class="product-price">$1,333</div>
+                <div class="product-icon">⚡</div>
+                <h3>Raw Data Access</h3>
+                <ul class="product-features">
+                    <li><i class="fas fa-check"></i> JSON Data Stream</li>
+                    <li><i class="fas fa-check"></i> Modding Kit</li>
+                    <li><i class="fas fa-check"></i> Monthly Baker Consultation</li>
+                </ul>
+                <button class="pledge-button" onclick="pledge('oracle')">PLEDGE $1,333</button>
+            </div>
+
+            <!-- Regional Governor -->
+            <div class="product-card">
+                <div class="product-tier">💎 REGIONAL GOVERNOR</div>
+                <div class="product-price">$13,333</div>
+                <div class="product-icon">👑</div>
+                <h3>Digital Real Estate</h3>
+                <ul class="product-features">
+                    <li><i class="fas fa-check"></i> Hub Ownership (Your Name on Map)</li>
+                    <li><i class="fas fa-check"></i> 1% HU Tax Revenue</li>
+                    <li><i class="fas fa-check"></i> Silver NFC Ring</li>
+                </ul>
+                <button class="pledge-button" onclick="pledge('governor')">PLEDGE $13,333</button>
+            </div>
+
+            <!-- Grand Architect -->
+            <div class="product-card">
+                <div class="product-tier">👁️ GRAND ARCHITECT</div>
+                <div class="product-price">$333,333</div>
+                <div class="product-icon">🌟</div>
+                <h3>Reality Immersion</h3>
+                <ul class="product-features">
+                    <li><i class="fas fa-check"></i> Morocco Board Meeting Invite</li>
+                    <li><i class="fas fa-check"></i> Logistics Influence 2026</li>
+                    <li><i class="fas fa-check"></i> Lifetime Ecosystem Share</li>
+                </ul>
+                <button class="pledge-button" onclick="pledge('architect')">PLEDGE $333,333</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="stats">
+        <h2 class="section-title" style="color: white;">ECOSYSTEM IMPACT</h2>
+        <div class="stats-grid">
+            <div class="stat-item">
+                <h3>33</h3>
+                <p>Illumination Levels</p>
+            </div>
+            <div class="stat-item">
+                <h3>5</h3>
+                <p>Tiered Artifacts</p>
+            </div>
+            <div class="stat-item">
+                <h3>30M</h3>
+                <p>Funding Goal</p>
+            </div>
+            <div class="stat-item">
+                <h3>Poznań-Tangier</h3>
+                <p>Supply Chain Bridge</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="section about">
+        <div class="about-content">
+            <div class="about-text">
+                <h2>The Sovereign Ecosystem</h2>
+                <p>Illumination Trends fuses Poznań's Brutalist pixel grit with Tangier's zellige-glitched ports. Our artifacts aren't merchandise—they're operational nodes in the global supply chain simulation.</p>
+                <p>From Observer fidget clickers to Grand Architect rings, each piece embeds NFC reality bridges, UV steganography, and tiered illumination mechanics. Wear the code. Own the chain.</p>
+            </div>
+            <div class="about-image">
+                <i class="fas fa-globe"></i>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stretch Goals -->
+    <section class="section stretch-goals">
+        <h2 class="section-title" style="color: white;">STRETCH GOALS</h2>
+        <div class="goals-grid">
+            <div class="goal-card">
+                <div class="goal-amount">$10M</div>
+                <h3>PROJECT CUBESAT</h3>
+                <p>Sovereign satellite network for offline play</p>
+            </div>
+            <div class="goal-card">
+                <div class="goal-amount">$20M</div>
+                <h3>NEURAL NET DEALERS</h3>
+                <p>AI NPCs with voice negotiation</p>
+            </div>
+            <div class="goal-card">
+                <div class="goal-amount">$30M</div>
+                <h3>REALITY BRIDGE FUND</h3>
+                <p>Player-voted truck & warehouse purchases</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>&copy; 2026 Illumination Trends. BTC/ETH/Stripe. Enter the conspiracy.</p>
+        <p style="margin-top: 1rem; opacity: 0.7;">"Iluminuj łańcuch. Od kliku do królestwa."</p>
+    </footer>
+
+    <script>
+        function pledge(tier) {
+            // Simulate pledge
+            alert(`Pledge confirmed for ${tier.toUpperCase()} tier! Processing payment...`);
+            // In real implementation, integrate Stripe/BTC payment
+        }
+
+        // Smooth scrolling
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
+</body>
+</html>

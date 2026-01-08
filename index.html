@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hashish Empire: The Illumination Clicker</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=VT323&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="game-container">
+        <!-- Header -->
+        <header class="game-header">
+            <div class="title-section">
+                <h1 class="game-title">HASHISH EMPIRE</h1>
+                <h2 class="game-subtitle">THE ILLUMINATION CLICKER</h2>
+                <div class="illumination-level">
+                    <span class="level-text">ILLUMINATION LEVEL: </span>
+                    <span id="current-level">1</span>
+                    <span class="level-name" id="level-name">Street Dealer</span>
+                </div>
+            </div>
+            <div class="stats-section">
+                <div class="stat-item">
+                    <span class="stat-label">Hash Units:</span>
+                    <span class="stat-value" id="hash-units">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">HU/sec:</span>
+                    <span class="stat-value" id="hu-per-sec">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">CPS:</span>
+                    <span class="stat-value" id="clicks-per-second">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Prestige:</span>
+                    <span class="stat-value" id="prestige-level">0</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Game Area -->
+        <main class="game-main">
+            <!-- Left Panel - Clicking Area -->
+            <section class="click-area">
+                <div class="plant-container">
+                    <div class="hashish-plant" id="hashish-plant">
+                        <div class="plant-icon">🌿</div>
+                        <div class="click-effect" id="click-effect"></div>
+                    </div>
+                    <div class="click-counter" id="click-counter">+1</div>
+                    <div id="combo-display" class="combo-display hidden">x1</div>
+                </div>
+                
+                <!-- Illuminati Eye (appears at higher levels) -->
+                <div class="illuminati-eye hidden" id="illuminati-eye">
+                    <div class="eye-symbol">👁</div>
+                    <div class="pyramid">▲</div>
+                </div>
+
+                <!-- Current Tier Display -->
+                <div class="tier-display">
+                    <h3 id="tier-title">Tier 1: Street-Level Operations</h3>
+                    <p id="tier-description">The seed is planted. Now, nurture it.</p>
+                    <div class="level-progress">
+                        <div id="level-progress-bar"><div id="level-progress-fill"></div></div>
+                        <div id="level-progress-text">0%</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Right Panel - Upgrades -->
+            <section class="upgrades-panel">
+                <div class="panel-header">
+                    <h3>UPGRADES & OPERATIONS</h3>
+                    <div class="panel-tabs">
+                        <button class="tab-btn active" data-tab="production">Production</button>
+                        <button class="tab-btn" data-tab="distribution">Distribution</button>
+                        <button class="tab-btn" data-tab="influence">Influence</button>
+                        <button class="tab-btn" data-tab="prestige">Prestige</button>
+                    </div>
+                </div>
+
+                <!-- Production Tab -->
+                <div class="tab-content active" id="production-tab">
+                    <div class="upgrades-list" id="production-upgrades">
+                        <!-- Upgrades will be dynamically generated -->
+                    </div>
+                </div>
+
+                <!-- Distribution Tab -->
+                <div class="tab-content" id="distribution-tab">
+                    <div class="upgrades-list" id="distribution-upgrades">
+                        <!-- Upgrades will be dynamically generated -->
+                    </div>
+                </div>
+
+                <!-- Influence Tab -->
+                <div class="tab-content" id="influence-tab">
+                    <div class="upgrades-list" id="influence-upgrades">
+                        <!-- Upgrades will be dynamically generated -->
+                    </div>
+                </div>
+
+                <!-- Prestige Tab -->
+                <div class="tab-content" id="prestige-tab">
+                    <div class="prestige-info">
+                        <h4>Prestige System</h4>
+                        <p>Reset your progress for permanent bonuses</p>
+                        <div class="prestige-stats">
+                            <div>Enlightenment Tokens: <span id="enlightenment-tokens">0</span></div>
+                            <div>Global Multiplier: <span id="global-multiplier">1.0x</span></div>
+                        </div>
+                        <button class="prestige-btn" id="prestige-btn" disabled>PRESTIGE</button>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Bottom Panel - Analytics & Events -->
+        <footer class="game-footer">
+            <div class="analytics-panel">
+                <h4>ANALYTICS TERMINAL</h4>
+                <div class="terminal-content" id="analytics-terminal">
+                    <div class="terminal-line">> System initialized...</div>
+                    <div class="terminal-line">> Monitoring global hash flow...</div>
+                    <div class="terminal-line">> Ready for operations.</div>
+                </div>
+            </div>
+            
+            <div class="events-panel">
+                <h4>OPERATIONS LOG</h4>
+                <div class="events-content" id="events-log">
+                    <div class="event-item">Welcome to the Empire</div>
+                </div>
+            </div>
+        </footer>
+
+        <!-- Modal for Events -->
+        <div class="modal hidden" id="event-modal">
+            <div class="modal-content">
+                <h3 id="modal-title">Event</h3>
+                <p id="modal-description">Event description</p>
+                <div class="modal-buttons">
+                    <button class="modal-btn" id="modal-btn1">Option 1</button>
+                    <button class="modal-btn" id="modal-btn2">Option 2</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Save/Load Panel -->
+        <div class="save-panel">
+            <button class="save-btn" id="save-btn">💾 SAVE</button>
+            <button class="load-btn" id="load-btn">📁 LOAD</button>
+            <button class="reset-btn" id="reset-btn">🔄 RESET</button>
+        </div>
+    </div>
+
+    <script src="game.js"></script>
+    <script src="terminal.js"></script>
+    <script src="achievements.js"></script>
+</body>
+</html>
