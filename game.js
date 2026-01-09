@@ -1,8 +1,26 @@
-// Hashish Empire: The Illumination Clicker - Game Engine
+// Empire Engine: The Illumination Clicker - Core System
 // Reality Game with Analytics Tracking for Oriental Group
 
 class HashishEmpire {
-    constructor() {
+    constructor(config = null, playerProfile = null) {
+        // Configuration loaded from Launcher
+        this.config = config;
+        this.empireKey = config.empireKey || 'syndicate';
+
+        // ProfileCoder Integration (v3.3 Specification Mock)
+        this.profile = playerProfile || {
+            id: 'anonymous',
+            psychometrics: {
+                dopamineSensitivity: 0.5, // 0.0 - 1.0 (Low = Slow Burn, High = Instant Gratification)
+                riskTolerance: 0.5,       // 0.0 - 1.0 (Low = Safe, High = Volatile)
+                attentionSpan: 0.5        // 0.0 - 1.0 (Affects text length and complexity)
+            },
+            context: {
+                culture: 'cyberpunk_oriental',
+                industry: 'underground'
+            }
+        };
+
         this.gameState = {
             hashUnits: 0,
             hashPerSecond: 0,
@@ -18,9 +36,9 @@ class HashishEmpire {
         };
 
         this.upgrades = {
-            production: [],
-            distribution: [],
-            influence: []
+            production: this.config.upgrades?.production || [],
+            distribution: this.config.upgrades?.distribution || [],
+            influence: this.config.upgrades?.influence || []
         };
 
         this.analytics = {
@@ -38,240 +56,41 @@ class HashishEmpire {
         this.clickTimestamps = []; // ms timestamps for CPS calculation
         this.clickBuffer = { count: 0, value: 0, timer: null }; // aggregate floating numbers
         this.combo = { count: 0, lastTime: 0 }; // combo counter for quick clicks
-        this.clickAggregationWindow = 120; // ms to aggregate floating numbers
-        this.comboTimeout = 800; // ms to expire combo
+        
+        // Dynamic Parameters based on ProfileCoder
+        this.clickAggregationWindow = 120; 
+        this.comboTimeout = 800; 
         this.displayedCPS = 0;
 
-        this.initializeUpgrades();
+        this.applyProfileMetrics(); // Apply psychometrics to game physics
+        // Upgrades are now initialized via config injection in constructor
         this.initializeEventListeners();
         this.startGameLoop();
         this.loadGame();
         this.updateDisplay();
     }
 
-    // Initialize all upgrade tiers and paths
-    initializeUpgrades() {
-        // Tier 1: Street-Level Operations (Levels 1-5)
-        this.upgrades.production = [
-            {
-                id: 'young_dealer',
-                name: 'The Young Dealer',
-                description: 'A street-smart kid who knows the corners',
-                cost: 15,
-                baseProduction: 0.1,
-                owned: 0,
-                tier: 1,
-                unlockLevel: 1,
-                category: 'production'
-            },
-            {
-                id: 'street_corner',
-                name: 'Street Corner Stand',
-                description: 'Prime real estate for discrete transactions',
-                cost: 100,
-                baseProduction: 1,
-                owned: 0,
-                tier: 1,
-                unlockLevel: 2,
-                category: 'production'
-            },
-            {
-                id: 'local_network',
-                name: 'Local Network',
-                description: 'Word of mouth spreads like wildfire',
-                cost: 500,
-                baseProduction: 5,
-                owned: 0,
-                tier: 1,
-                unlockLevel: 3,
-                category: 'production'
-            },
-            {
-                id: 'bicycle_delivery',
-                name: 'Bicycle Delivery',
-                description: 'Fast, silent, and eco-friendly distribution',
-                cost: 2000,
-                baseProduction: 20,
-                owned: 0,
-                tier: 1,
-                unlockLevel: 4,
-                category: 'production'
-            },
-            // Tier 2: Production & Local Commerce (Levels 6-10)
-            {
-                id: 'hashish_bakery',
-                name: 'The Hashish Bakery',
-                description: 'Special cakes for special customers',
-                cost: 10000,
-                baseProduction: 100,
-                owned: 0,
-                tier: 2,
-                unlockLevel: 6,
-                category: 'production',
-                pathChoice: true,
-                paths: ['underground', 'semi_legal']
-            },
-            {
-                id: 'coffee_shop',
-                name: 'Coffee Shop Front',
-                description: 'The perfect cover for afternoon meetings',
-                cost: 25000,
-                baseProduction: 250,
-                owned: 0,
-                tier: 2,
-                unlockLevel: 7,
-                category: 'production'
-            },
-            {
-                id: 'dispensary',
-                name: 'Discreet Dispensary',
-                description: 'Medical purposes only, of course',
-                cost: 75000,
-                baseProduction: 750,
-                owned: 0,
-                tier: 2,
-                unlockLevel: 8,
-                category: 'production'
-            },
-            {
-                id: 'urban_grow',
-                name: 'Urban Grow-Op',
-                description: 'Vertical farming meets ancient wisdom',
-                cost: 200000,
-                baseProduction: 2000,
-                owned: 0,
-                tier: 2,
-                unlockLevel: 9,
-                category: 'production'
-            },
-            // Tier 3: Regional Expansion (Levels 11-15)
-            {
-                id: 'courier_network',
-                name: 'The Courier Network',
-                description: 'Professional logistics across borders',
-                cost: 500000,
-                baseProduction: 5000,
-                owned: 0,
-                tier: 3,
-                unlockLevel: 11,
-                category: 'production'
-            },
-            {
-                id: 'hidden_warehouses',
-                name: 'Hidden Warehouses',
-                description: 'Storage facilities in plain sight',
-                cost: 1500000,
-                baseProduction: 15000,
-                owned: 0,
-                tier: 3,
-                unlockLevel: 12,
-                category: 'production'
-            },
-            {
-                id: 'port_connections',
-                name: 'Port Connections',
-                description: 'Maritime routes from Morocco to Europe',
-                cost: 5000000,
-                baseProduction: 50000,
-                owned: 0,
-                tier: 3,
-                unlockLevel: 13,
-                category: 'production',
-                specialEffect: 'morocco_connection'
-            },
-            {
-                id: 'poznan_hub',
-                name: 'The Poznań Hub',
-                description: 'Central European distribution center',
-                cost: 15000000,
-                baseProduction: 150000,
-                owned: 0,
-                tier: 3,
-                unlockLevel: 14,
-                category: 'production',
-                specialEffect: 'poland_connection'
-            }
-        ];
+    // METHODOLOGY: ProfileCoder Adapter
+    // Adjusts game mechanics based on bio-parameters and psychometrics
+    applyProfileMetrics() {
+        const p = this.profile.psychometrics;
 
-        this.upgrades.distribution = [
-            // Distribution upgrades focusing on logistics and reach
-            {
-                id: 'encrypted_comms',
-                name: 'Encrypted Communications',
-                description: 'Secure channels for coordination',
-                cost: 1000,
-                effect: 'click_multiplier',
-                value: 1.5,
-                owned: 0,
-                tier: 1,
-                unlockLevel: 3,
-                category: 'distribution'
-            },
-            {
-                id: 'supply_chain',
-                name: 'Supply Chain Optimization',
-                description: 'Efficiency through technology',
-                cost: 50000,
-                effect: 'production_multiplier',
-                value: 1.25,
-                owned: 0,
-                tier: 2,
-                unlockLevel: 8,
-                category: 'distribution'
-            },
-            {
-                id: 'dark_web_market',
-                name: 'Dark Web Marketplace',
-                description: 'Digital expansion of operations',
-                cost: 500000,
-                effect: 'global_multiplier',
-                value: 1.5,
-                owned: 0,
-                tier: 3,
-                unlockLevel: 12,
-                category: 'distribution'
-            }
-        ];
+        // Dopamine Sensitivity Adjustment
+        // High sensitivity users need faster feedback loops and easier combos
+        if (p.dopamineSensitivity > 0.7) {
+            this.comboTimeout = 1200; // Easier to keep combo
+            this.clickAggregationWindow = 80; // Faster visual popups
+            this.gameState.clickPower *= 1.5; // Bigger numbers faster
+        } else if (p.dopamineSensitivity < 0.3) {
+            // "Slow Burn" players prefer strategic depth over clicking
+            this.comboTimeout = 500; // Harder combo
+            this.gameState.globalMultiplier *= 1.2; // Better passive income focus
+        }
 
-        this.upgrades.influence = [
-            // Influence upgrades for higher-tier gameplay
-            {
-                id: 'local_politician',
-                name: 'Local Politician',
-                description: 'A friend in city hall',
-                cost: 100000,
-                effect: 'risk_reduction',
-                value: 0.1,
-                owned: 0,
-                tier: 2,
-                unlockLevel: 10,
-                category: 'influence'
-            },
-            {
-                id: 'media_influence',
-                name: 'Media Influence',
-                description: 'Shaping public opinion',
-                cost: 1000000,
-                effect: 'prestige_bonus',
-                value: 1.2,
-                owned: 0,
-                tier: 3,
-                unlockLevel: 15,
-                category: 'influence'
-            },
-            {
-                id: 'think_tank',
-                name: 'Think Tank Funding',
-                description: 'Academic legitimacy for policy change',
-                cost: 10000000,
-                effect: 'enlightenment_bonus',
-                value: 2,
-                owned: 0,
-                tier: 4,
-                unlockLevel: 20,
-                category: 'influence'
-            }
-        ];
+        // Risk Tolerance Adjustment
+        // Affects RNG in events (handled in triggerRandomEvent)
+        
+        console.log(`🧬 ProfileCoder v3.3 Applied: Dopa=${p.dopamineSensitivity}, Risk=${p.riskTolerance}`);
     }
 
     // Initialize event listeners
@@ -289,6 +108,11 @@ class HashishEmpire {
         document.getElementById('save-btn').addEventListener('click', () => this.saveGame());
         document.getElementById('load-btn').addEventListener('click', () => this.loadGame());
         document.getElementById('reset-btn').addEventListener('click', () => this.resetGame());
+        document.getElementById('console-btn').addEventListener('click', () => {
+            if (window.terminal) {
+                window.terminal.toggleTerminal();
+            }
+        });
 
         // Prestige button
         document.getElementById('prestige-btn').addEventListener('click', () => this.prestige());
@@ -418,7 +242,7 @@ class HashishEmpire {
 
         // Apply upgrade effects
         if (upgrade.baseProduction) {
-            this.gameState.hashPerSecond += upgrade.baseProduction * this.gameState.globalMultiplier;
+            this.gameState.hashPerSecond += upgrade.baseProduction;
         }
 
 
@@ -513,18 +337,24 @@ class HashishEmpire {
 
     // Random events system
     triggerRandomEvent() {
+        // Adjust event frequency/severity based on ProfileCoder Risk Tolerance
+        const riskMod = this.profile.psychometrics.riskTolerance;
+        
+        // High risk tolerance players get more volatile events (bigger losses, bigger gains)
+        const volatility = 0.2 + (riskMod * 0.5); 
+
         const events = [
             {
                 title: 'Police Raid!',
                 description: 'Authorities are closing in on one of your operations.',
-                option1: { text: 'Pay Bribe (50% HU)', cost: 0.5 },
-                option2: { text: 'Take the Loss (20% HU)', cost: 0.2 }
+                option1: { text: `Pay Bribe (${Math.floor(50 * volatility)}% ${this.config.currencySymbol})`, cost: 0.5 * volatility },
+                option2: { text: `Take the Loss (${Math.floor(20 * volatility)}% ${this.config.currencySymbol})`, cost: 0.2 * volatility }
             },
             {
                 title: 'New Market Opportunity',
                 description: 'A new demographic shows interest in your products.',
-                option1: { text: 'Invest Heavily (30% HU)', cost: 0.3, reward: 2.0 },
-                option2: { text: 'Conservative Approach (10% HU)', cost: 0.1, reward: 1.2 }
+                option1: { text: `Invest Heavily (30% ${this.config.currencySymbol})`, cost: 0.3, reward: 1.5 + riskMod }, // Higher reward for risk takers
+                option2: { text: `Conservative Approach (10% ${this.config.currencySymbol})`, cost: 0.1, reward: 1.2 }
             },
             {
                 title: 'Competitor Threat',
@@ -642,34 +472,34 @@ class HashishEmpire {
 
         if (level <= 5) {
             tier = 1;
-            title = 'Tier 1: Street-Level Operations';
+            title = `Tier 1: ${this.config.tiers[0].name}`;
             description = 'The seed is planted. Now, nurture it.';
-            name = 'Street Dealer';
+            name = this.config.tiers[0].role;
         } else if (level <= 10) {
             tier = 2;
-            title = 'Tier 2: Production & Local Commerce';
+            title = `Tier 2: ${this.config.tiers[1].name}`;
             description = 'From clandestine to clandestine chic.';
-            name = 'Local Entrepreneur';
+            name = this.config.tiers[1].role;
         } else if (level <= 15) {
             tier = 3;
-            title = 'Tier 3: Regional Expansion & Logistics';
+            title = `Tier 3: ${this.config.tiers[2].name}`;
             description = 'The tentacles spread. Europe awaits.';
-            name = 'Regional Coordinator';
+            name = this.config.tiers[2].role;
         } else if (level <= 20) {
             tier = 4;
-            title = 'Tier 4: National Influence & Media Control';
+            title = `Tier 4: ${this.config.tiers[3].name}`;
             description = 'Perception is reality. And we own reality.';
-            name = 'Media Manipulator';
+            name = this.config.tiers[3].role;
         } else if (level <= 25) {
             tier = 5;
-            title = 'Tier 5: Global Lobbying & Power Structures';
+            title = `Tier 5: ${this.config.tiers[4].name}`;
             description = 'The world dances to our tune.';
-            name = 'Shadow Diplomat';
+            name = this.config.tiers[4].role;
         } else {
             tier = 6;
-            title = 'Tier 6: The Illumination Council';
+            title = `Tier 6: ${this.config.tiers[5].name}`;
             description = 'The Eye watches. The Empire endures. You are the Architect.';
-            name = 'Grand Architect';
+            name = this.config.tiers[5].role;
         }
 
         tierTitle.textContent = title;
@@ -758,8 +588,8 @@ class HashishEmpire {
         div.innerHTML = `
             <div class="upgrade-name">${upgrade.name} ${upgrade.owned > 0 ? `(${upgrade.owned})` : ''}</div>
             <div class="upgrade-description">${upgrade.description}</div>
-            <div class="upgrade-cost">Cost: ${this.formatNumber(cost)} HU</div>
-            ${upgrade.baseProduction ? `<div class="upgrade-production">+${this.formatNumber(upgrade.baseProduction)} HU/sec</div>` : ''}
+            <div class="upgrade-cost">Cost: ${this.formatNumber(cost)} ${this.config.currencySymbol}</div>
+            ${upgrade.baseProduction ? `<div class="upgrade-production">+${this.formatNumber(upgrade.baseProduction)} ${this.config.currencySymbol}/sec</div>` : ''}
         `;
 
         div.addEventListener('click', () => {
@@ -975,7 +805,7 @@ class HashishEmpire {
         const displayedHU = typeof this.displayedHashUnits === 'number' ? this.displayedHashUnits : this.gameState.hashUnits;
         const displayedHUPS = typeof this.displayedHuPerSec === 'number' ? this.displayedHuPerSec : (this.gameState.hashPerSecond * this.gameState.globalMultiplier);
 
-        document.getElementById('hash-units').textContent = this.formatNumber(displayedHU);
+        document.getElementById('hash-units').textContent = `${this.formatNumber(displayedHU)} ${this.config.currencySymbol}`;
         document.getElementById('hu-per-sec').textContent = this.formatNumber(displayedHUPS);
         document.getElementById('current-level').textContent = this.gameState.illuminationLevel;
         document.getElementById('prestige-level').textContent = this.gameState.prestigeLevel;
@@ -1022,13 +852,37 @@ class HashishEmpire {
             try {
                 const data = JSON.parse(saveData);
                 this.gameState = { ...this.gameState, ...data.gameState };
-                this.upgrades = data.upgrades || this.upgrades;
                 this.analytics = data.analytics || this.analytics;
+
+                // Restore upgrades safely (merge owned counts into current structure)
+                if (data.upgrades) {
+                    Object.keys(this.upgrades).forEach(category => {
+                        if (data.upgrades[category]) {
+                            this.upgrades[category].forEach(upgrade => {
+                                const savedUpgrade = data.upgrades[category].find(u => u.id === upgrade.id);
+                                if (savedUpgrade) {
+                                    upgrade.owned = savedUpgrade.owned || 0;
+                                }
+                            });
+                        }
+                    });
+                }
 
                 // Sanitize loaded data to prevent NaN/null issues from corrupted saves
                 const sanitize = (val, def) => isNaN(val) || val === null || val === undefined ? def : val;
                 this.gameState.hashUnits = sanitize(this.gameState.hashUnits, 0);
-                this.gameState.hashPerSecond = sanitize(this.gameState.hashPerSecond, 0);
+                
+                // Recalculate hashPerSecond from upgrades to ensure consistency and fix old save bugs
+                this.gameState.hashPerSecond = 0;
+                Object.values(this.upgrades).forEach(category => {
+                    category.forEach(upgrade => {
+                        upgrade.owned = Math.max(0, Math.floor(sanitize(upgrade.owned, 0)));
+                        if (upgrade.baseProduction && upgrade.owned > 0) {
+                            this.gameState.hashPerSecond += upgrade.baseProduction * upgrade.owned;
+                        }
+                    });
+                });
+
                 this.gameState.clickPower = sanitize(this.gameState.clickPower, 1);
                 this.gameState.globalMultiplier = sanitize(this.gameState.globalMultiplier, 1.0);
                 this.gameState.illuminationLevel = Math.floor(sanitize(this.gameState.illuminationLevel, 1));
@@ -1038,13 +892,6 @@ class HashishEmpire {
                 this.gameState.totalHashEarned = sanitize(this.gameState.totalHashEarned, 0);
                 this.gameState.gameStartTime = sanitize(this.gameState.gameStartTime, Date.now());
                 this.gameState.lastSave = sanitize(this.gameState.lastSave, Date.now());
-
-                // Sanitize upgrades owned counts
-                Object.values(this.upgrades).forEach(category => {
-                    category.forEach(upgrade => {
-                        upgrade.owned = Math.max(0, Math.floor(sanitize(upgrade.owned, 0)));
-                    });
-                });
                 
                 this.updateDisplay();
                 this.updateTierDisplay();
@@ -1064,13 +911,83 @@ class HashishEmpire {
     }
 }
 
-// Initialize game when page loads
+// Launcher System
+class GameLauncher {
+    constructor() {
+        this.renderLauncher();
+    }
+
+    renderLauncher() {
+        const container = document.createElement('div');
+        container.className = 'launcher-container';
+        
+        let html = `
+            <div class="launcher-header">
+                <h1>SELECT YOUR EMPIRE</h1>
+                <p>Choose your path to domination</p>
+            </div>
+            <div class="empires-grid">
+        `;
+
+        // Load from EMPIRE_DATA
+        const empires = window.EMPIRE_DATA || {};
+        
+        // Fallback if data is missing
+        if (Object.keys(empires).length === 0) {
+            container.innerHTML = `
+                <div class="launcher-header" style="color: red;">
+                    <h1>ERROR: EMPIRE DATA MISSING</h1>
+                    <p>Please ensure 'empires.js' is loaded correctly.</p>
+                </div>`;
+            document.body.appendChild(container);
+            return;
+        }
+        
+        Object.keys(empires).forEach(key => {
+            const emp = empires[key];
+            html += `
+                <div class="empire-card ${emp.meta.theme}" onclick="window.launcher.startGame('${key}')">
+                    <div class="empire-icon">${emp.meta.icon}</div>
+                    <h2>${emp.meta.name}</h2>
+                    <p class="empire-desc">${emp.meta.description}</p>
+                    <div class="empire-stats">
+                        <div class="stat-row"><span>Speed</span><div class="stat-bar" style="width:${emp.meta.criteria.speed * 10}%"></div></div>
+                        <div class="stat-row"><span>Stability</span><div class="stat-bar" style="width:${emp.meta.criteria.stability * 10}%"></div></div>
+                        <div class="stat-row"><span>Efficiency</span><div class="stat-bar" style="width:${emp.meta.criteria.efficiency * 10}%"></div></div>
+                        <div class="stat-row"><span>Harmony</span><div class="stat-bar" style="width:${emp.meta.criteria.harmony * 10}%"></div></div>
+                    </div>
+                </div>
+            `;
+        });
+
+        html += `</div>`;
+        container.innerHTML = html;
+        document.body.appendChild(container);
+    }
+
+    startGame(empireKey) {
+        const empireData = window.EMPIRE_DATA[empireKey];
+        if (!empireData) return;
+
+        // Remove launcher
+        document.querySelector('.launcher-container').remove();
+        document.querySelector('.game-container').classList.remove('hidden');
+
+        // Apply Theme
+        document.body.className = empireData.meta.theme;
+
+        // Merge config with upgrades
+        const fullConfig = { ...empireData.config, upgrades: empireData.upgrades, empireKey: empireKey };
+
+        // Initialize Game
+        window.game = new HashishEmpire(fullConfig);
+        window.game.switchTab('production');
+        window.dispatchEvent(new Event('game-ready'));
+    }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
-    window.game = new HashishEmpire();
-    
-    // Initial tab setup
-    window.game.switchTab('production');
-    
-    console.log('🌿 Hashish Empire: The Illumination Clicker initialized');
-    console.log('📊 Analytics tracking active for Oriental Group insights');
+    // Hide game container initially
+    document.querySelector('.game-container').classList.add('hidden');
+    window.launcher = new GameLauncher();
 });

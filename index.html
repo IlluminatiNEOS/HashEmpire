@@ -54,6 +54,15 @@
                     <div class="click-counter" id="click-counter">+1</div>
                     <div id="combo-display" class="combo-display hidden">x1</div>
                 </div>
+
+                <!-- Save/Load/Console Panel -->
+                <div class="save-panel">
+                    <button class="action-btn" id="save-btn">💾 <span class="btn-text">SAVE</span></button>
+                    <button class="action-btn" id="load-btn">📁 <span class="btn-text">LOAD</span></button>
+                    <button class="action-btn" id="reset-btn">🔄 <span class="btn-text">RESET</span></button>
+                    <button class="action-btn" id="console-btn">_</button>
+                    <button class="action-btn" onclick="window.open('illumination-store/index.html', '_blank')">🛒 <span class="btn-text">MERCH</span></button>
+                </div>
                 
                 <!-- Illuminati Eye (appears at higher levels) -->
                 <div class="illuminati-eye hidden" id="illuminati-eye">
@@ -159,6 +168,7 @@
         </div>
     </div>
 
+    <script src="empires.js"></script>
     <script src="game.js"></script>
     <script src="terminal.js"></script>
     <script src="achievements.js"></script>

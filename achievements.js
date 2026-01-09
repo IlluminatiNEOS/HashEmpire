@@ -13,6 +13,28 @@ class AchievementSystem {
     }
 
     initializeAchievements() {
+        // Check if game config has custom achievements
+        if (this.game.config && window.EMPIRE_DATA && window.EMPIRE_DATA[this.game.empireKey]?.achievements) {
+            const customAchievements = window.EMPIRE_DATA[this.game.empireKey].achievements;
+            
+            this.achievements = customAchievements.map(a => ({
+                ...a,
+                tier: a.tier || 'bronze',
+                condition: () => {
+                    if (a.type === 'clicks') return this.game.gameState.totalClicks >= a.threshold;
+                    if (a.type === 'currency') return this.game.gameState.totalHashEarned >= a.threshold;
+                    if (a.type === 'level') return this.game.gameState.illuminationLevel >= a.threshold;
+                    return false;
+                }
+            }));
+            
+            // Add some generic ones if list is short
+            if (this.achievements.length < 5) {
+                this.addGenericAchievements();
+            }
+            return;
+        }
+
         this.achievements = [
             // Clicking Achievements
             {
@@ -242,6 +264,18 @@ class AchievementSystem {
                 tier: 'gold'
             }
         ];
+    }
+
+    addGenericAchievements() {
+        this.achievements.push({
+            id: 'generic_master',
+            name: 'Empire Builder',
+            description: 'Purchase 10 upgrades',
+            icon: '🏗️',
+            condition: () => this.game.getTotalUpgrades() >= 10,
+            reward: { type: 'multiplier', value: 1.2 },
+            tier: 'silver'
+        });
     }
 
     createNotificationSystem() {
@@ -587,11 +621,15 @@ class AchievementSystem {
 }
 
 // Initialize achievement system when game loads
-document.addEventListener('DOMContentLoaded', () => {
-    setTimeout(() => {
-        if (window.game) {
-            window.achievements = new AchievementSystem(window.game);
-            window.achievements.loadProgress();
-        }
-    }, 1500);
-});
+const initAchievements = () => {
+    if (window.game && !window.achievements) {
+        window.achievements = new AchievementSystem(window.game);
+        window.achievements.loadProgress();
+    }
+};
+
+if (window.game) {
+    initAchievements();
+} else {
+    window.addEventListener('game-ready', initAchievements);
+}

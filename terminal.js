@@ -13,17 +13,19 @@ class TerminalSystem {
 
     initializeTerminal() {
         // Create terminal interface
+        const title = this.game.config.terminalTitle || 'COMMAND INTERFACE';
+        
         const terminalContainer = document.createElement('div');
         terminalContainer.id = 'terminal-interface';
         terminalContainer.className = 'terminal-container hidden';
         terminalContainer.innerHTML = `
             <div class="terminal-header">
-                <span class="terminal-title">👁️ ORIENTAL COMMAND INTERFACE</span>
+                <span class="terminal-title">👁️ ${title}</span>
                 <span class="terminal-status">STATUS: LIVE_OPERATION | SECURITY: AES-256</span>
                 <button class="terminal-close" onclick="window.terminal.toggleTerminal()">×</button>
             </div>
             <div class="terminal-output" id="terminal-output">
-                <div class="terminal-line">👁️ PROJECT ORIENTAL: The Sovereign Supply-Chain Simulation</div>
+                <div class="terminal-line">👁️ SYSTEM: ${title}</div>
                 <div class="terminal-line">STATUS: LIVE_OPERATION | REGION: POLAND-MOROCCO-HUB</div>
                 <div class="terminal-line">SECURITY: AES-256 ENCRYPTED</div>
                 <div class="terminal-line">---</div>
@@ -602,11 +604,14 @@ class TerminalSystem {
 }
 
 // Initialize terminal when game loads
-document.addEventListener('DOMContentLoaded', () => {
-    // Wait for game to initialize
-    setTimeout(() => {
-        if (window.game) {
-            window.terminal = new TerminalSystem(window.game);
-        }
-    }, 1000);
-});
+const initTerminal = () => {
+    if (window.game && !window.terminal) {
+        window.terminal = new TerminalSystem(window.game);
+    }
+};
+
+if (window.game) {
+    initTerminal();
+} else {
+    window.addEventListener('game-ready', initTerminal);
+}

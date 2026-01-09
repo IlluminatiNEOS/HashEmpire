@@ -544,30 +544,45 @@ body::before {
     transform: scale(1.05);
 }
 
-/* Save Panel */
 .save-panel {
-    position: fixed;
-    top: 20px;
-    right: 20px;
     display: flex;
+    justify-content: center;
     gap: 10px;
-    z-index: 1500;
+    margin-top: 20px;
+    margin-bottom: 20px;
 }
 
-.save-btn, .load-btn, .reset-btn {
-    padding: 10px 15px;
-    background: rgba(0, 0, 0, 0.8);
+.action-btn {
+    padding: 8px 12px;
+    background: rgba(0, 0, 0, 0.7);
     border: 1px solid #00ff00;
     color: #00ff00;
     cursor: pointer;
     border-radius: 5px;
     font-family: 'VT323', monospace;
     transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 5px;
 }
 
-.save-btn:hover, .load-btn:hover, .reset-btn:hover {
+.action-btn:hover {
     background: rgba(0, 255, 0, 0.2);
     transform: scale(1.05);
+}
+
+.action-btn .btn-text {
+    display: none; /* Ukryty tekst na starcie */
+}
+
+.action-btn:hover .btn-text {
+    display: inline; /* Pokazuje tekst po najechaniu */
+}
+
+#console-btn {
+    font-weight: bold;
+    font-size: 1.2rem;
+    padding: 5px 15px;
 }
 
 /* Utility Classes */
@@ -642,3 +657,89 @@ body::before {
 ::-webkit-scrollbar-thumb:hover {
     background: #ffff00;
 }
+
+/* LAUNCHER STYLES */
+.launcher-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #050505;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.launcher-header {
+    text-align: center;
+    margin-bottom: 50px;
+}
+
+.launcher-header h1 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 3rem;
+    color: #fff;
+    text-shadow: 0 0 20px rgba(255,255,255,0.5);
+}
+
+.empires-grid {
+    display: flex;
+    gap: 30px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.empire-card {
+    background: rgba(255,255,255,0.05);
+    border: 2px solid #333;
+    border-radius: 15px;
+    padding: 30px;
+    width: 300px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.empire-card:hover {
+    transform: translateY(-10px);
+    border-color: #fff;
+}
+
+.empire-icon {
+    font-size: 4rem;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.empire-stats {
+    margin-top: 20px;
+    font-size: 0.9rem;
+}
+
+.stat-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 5px;
+    color: #888;
+}
+
+.stat-bar {
+    height: 4px;
+    background: #555;
+    margin-left: 10px;
+    flex: 1;
+    border-radius: 2px;
+}
+
+/* THEMES */
+.empire-card.oriental:hover { border-color: #00ff00; box-shadow: 0 0 30px rgba(0,255,0,0.2); }
+.empire-card.corporate:hover { border-color: #00ffff; box-shadow: 0 0 30px rgba(0,255,255,0.2); }
+.empire-card.solarpunk:hover { border-color: #ffcc00; box-shadow: 0 0 30px rgba(255,204,0,0.2); }
+
+body.corporate { background: linear-gradient(45deg, #000011, #001133); color: #00ffff; }
+body.solarpunk { background: linear-gradient(45deg, #112200, #223311); color: #ffcc00; }
